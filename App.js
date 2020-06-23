@@ -15,6 +15,7 @@ import {
   createDrawerNavigator,
 } from "react-navigation";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { fromRight } from "react-navigation-transitions";
 
 import WelcomeScreen from "./screens/AppSwitchNavigator/WelcomeScreen";
@@ -23,6 +24,9 @@ import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import DrawerComponent from "./screens/DrawerNavigator/DrawerComponent";
+import AddMenu from "./screens/AddMenu";
+import SideMenu from "./screens/SideMenu";
+import ViewItem from "./screens/ViewItem";
 import color from "./assets/colors";
 
 import * as firebase from "firebase/app";
@@ -44,52 +48,87 @@ class App extends React.Component {
   }
 }
 
-const AppStackNavigator = createStackNavigator(
-  {
-    WelcomeScreen: {
-      screen: WelcomeScreen,
-      navigationOptions: {
-        header: null,
-      },
-    },
-    LoginScreen,
-  },
-  {
-    transitionConfig: () => fromRight(),
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: color.white,
-      },
-    },
-  }
-);
+// const AppStackNavigator = createStackNavigator(
+//   {
+//     WelcomeScreen: {
+//       screen: WelcomeScreen,
+//       navigationOptions: {
+//         header: null,
+//       },
+//     },
+//     LoginScreen,
+//   },
+//   {
+//     transitionConfig: () => fromRight(),
+//     defaultNavigationOptions: {
+//       headerStyle: {
+//         backgroundColor: color.white,
+//       },
+//     },
+//   }
+// );
 
-const AppDrawNavigator = createDrawerNavigator(
-  {
-    HomeScreen: {
-      screen: HomeScreen,
-      navigationOptions: {
-        title: "Home",
-        drawerIcon: () => <Ionicons name="ios-home" size={24} />,
-      },
-    },
-    SettingsScreen: {
-      screen: SettingsScreen,
-      navigationOptions: {
-        title: "Settings",
-        drawerIcon: () => <Ionicons name="ios-settings" size={24} />,
-      },
-    },
-  },
-  {
-    contentComponent: DrawerComponent,
-  }
-);
+// const ItemDisplayNavigator = createStackNavigator(
+//   {
+//     HomeScreen: {
+//       screen: HomeScreen,
+//       navigationOptions: {
+//         header: null,
+//       },
+//     },
+//     ViewItem,
+//   },
+//   {
+//     transitionConfig: () => fromRight(),
+//     defaultNavigationOptions: {
+//       headerStyle: {
+//         backgroundColor: color.white,
+//       },
+//     },
+//   }
+// );
+
+// const AppDrawNavigator = createDrawerNavigator(
+//   {
+//     HomeScreen: {
+//       screen: HomeScreen,
+//       navigationOptions: {
+//         title: "Home",
+//         drawerIcon: () => <Ionicons name="ios-home" size={24} />,
+//       },
+//     },
+//     AddMenu: {
+//       screen: AddMenu,
+//       navigationOptions: {
+//         title: "Menu",
+//         drawerIcon: () => <MaterialCommunityIcons name="shopping" size={24} />,
+//       },
+//     },
+//     SettingsScreen: {
+//       screen: SettingsScreen,
+//       navigationOptions: {
+//         title: "Settings",
+//         drawerIcon: () => <Ionicons name="ios-settings" size={24} />,
+//       },
+//     },
+//   },
+//   {
+//     contentComponent: DrawerComponent,
+//   }
+// );
 
 const AppSwitchNavigator = createSwitchNavigator({
   LoadingScreen,
-  AppStackNavigator,
-  AppDrawNavigator,
+  WelcomeScreen,
+  LoginScreen,
+  HomeScreen,
+  AddMenu,
+  ViewItem,
+  SettingsScreen,
+  SideMenu,
+  // AppStackNavigator,
+  // ItemDisplayNavigator,
+  // AppDrawNavigator,
 });
 
 const AppContainer = createAppContainer(AppSwitchNavigator);

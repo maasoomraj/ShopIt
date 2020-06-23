@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import color from "../../assets/colors";
 import { MaterialIndicator } from "react-native-indicators";
 import * as firebase from "firebase/app";
-import "firebase/auth";
+import("firebase/auth");
 
 export default class LoadingScreen extends Component {
   componentDidMount = () => {
@@ -26,10 +26,6 @@ export default class LoadingScreen extends Component {
         this.props.navigation.navigate("WelcomeScreen");
       }
     });
-  };
-
-  componentWillUnmount = () => {
-    this.unsubscribe;
   };
 
   render() {

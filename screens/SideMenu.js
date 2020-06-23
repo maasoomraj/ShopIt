@@ -9,7 +9,9 @@ import {
 } from "react-native";
 
 import color from "../assets/colors";
+import CustomActionButton from "../components/CustomActionButton";
 import PageLoading from "../components/PageLoading";
+import MenuList from "../components/MenuList";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -38,45 +40,8 @@ export default class HomeScreen extends Component {
       .child(user.uid)
       .once("value");
 
-    // Get list of all restaurants
-    const restaurants = await firebase.database().ref("details/").once("value");
-    // Convert Snapshot to Array
-    const newRestaurantsArray = snapshotToArray(restaurants);
-    // sort "ON" restaurants
-    let restaurantsArray = newRestaurantsArray.filter(
-      (restaurant) => restaurant.status === true
-    );
-
-    this.setState({
-      user: currentUser.val(),
-      loading: true,
-      restaurants: restaurantsArray,
-    });
+    this.setState({ user: currentUser.val(), loading: true });
   }
-
-  itemDisplay = (item, index) => {
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate("ViewItem", {
-            restaurant: item,
-            user: this.state.user,
-          })
-        }
-      >
-        <View style={styles.restaurantContainer}>
-          <View>
-            <Text style={styles.restaurantTitle}>{item.name}</Text>
-          </View>
-          <View>
-            <Text style={styles.restaurantLocation}>
-              Address - {item.location}
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   render() {
     return (
@@ -85,33 +50,75 @@ export default class HomeScreen extends Component {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() =>
-              this.props.navigation.navigate("SideMenu", {
+              this.props.navigation.navigate("HomeScreen", {
                 user: this.state.user,
               })
             }
           >
             <View style={styles.headerButton}>
-              <Ionicons name="ios-menu" size={32} color="black" />
+              <Ionicons name="ios-arrow-round-back" size={32} color="black" />
             </View>
           </TouchableOpacity>
           <View style={styles.headerText}>
-            <Text>ShopIt</Text>
+            <Text>OPTIONS</Text>
           </View>
         </View>
         {/* Header End */}
-
         {this.state.loading ? (
           <View style={styles.content}>
-            <FlatList
-              data={this.state.restaurants}
-              renderItem={({ item }, index) => this.itemDisplay(item, index)}
-              keyExtractor={(item, index) => index.toString()}
-            />
+            {/* <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate("HomeScreen", {
+                  user: this.state.user,
+                })
+              }
+            >
+              <View
+                style={{
+                  height: 70,
+                  marginBottom: 10,
+                  borderBottomWidth: 0.5,
+                  borderColor: "black",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>Home</Text>
+              </View>
+            </TouchableOpacity> */}
+            <MenuList
+              onPress={() =>
+                this.props.navigation.navigate("HomeScreen", {
+                  user: this.state.user,
+                })
+              }
+            >
+              <Text>Home</Text>
+            </MenuList>
+
+            <MenuList
+              onPress={() =>
+                this.props.navigation.navigate("AddMenu", {
+                  user: this.state.user,
+                })
+              }
+            >
+              <Text>My Menu</Text>
+            </MenuList>
+
+            <MenuList
+              onPress={() =>
+                this.props.navigation.navigate("SettingsScreen", {
+                  user: this.state.user,
+                })
+              }
+            >
+              <Text>Settings</Text>
+            </MenuList>
           </View>
         ) : (
           <PageLoading />
         )}
-
         {/* Footer Start */}
         <View style={styles.footer}>
           <Text>Footer</Text>
