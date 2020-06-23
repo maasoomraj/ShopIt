@@ -27,6 +27,7 @@ import DrawerComponent from "./screens/DrawerNavigator/DrawerComponent";
 import AddMenu from "./screens/AddMenu";
 import SideMenu from "./screens/SideMenu";
 import ViewItem from "./screens/ViewItem";
+import MyCart from "./screens/MyCart";
 import color from "./assets/colors";
 
 import * as firebase from "firebase/app";
@@ -126,6 +127,7 @@ const AppSwitchNavigator = createSwitchNavigator({
   ViewItem,
   SettingsScreen,
   SideMenu,
+  MyCart,
   // AppStackNavigator,
   // ItemDisplayNavigator,
   // AppDrawNavigator,

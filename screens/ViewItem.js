@@ -5,7 +5,11 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ToastAndroid,
+  Alert,
 } from "react-native";
+
+import Dialog from "react-native-dialog";
 
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
@@ -25,6 +29,8 @@ export default class ViewItem extends Component {
       menu: [],
       user: {},
       loading: false,
+      dialogView: false,
+      selectedItem: {},
     };
   }
 
@@ -49,6 +55,35 @@ export default class ViewItem extends Component {
       loading: true,
     });
   }
+
+  addToCart = async (item) => {
+    try {
+      const key = await firebase
+        .database()
+        .ref("cart/")
+        .child(this.state.user.uid)
+        .push().key;
+
+      await firebase
+        .database()
+        .ref("cart/")
+        .child(this.state.user.uid)
+        .child(key)
+        .set({
+          item: item,
+          restaurant: this.state.restaurant,
+        });
+
+      this.setState({ dialogView: false, selectedItem: {} });
+      ToastAndroid.showWithGravity(
+        "Item was successfully added to your cart",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   itemDisplay = (item, index) => {
     return (
@@ -76,6 +111,9 @@ export default class ViewItem extends Component {
             bottom: 0,
             paddingRight: 10,
           }}
+          onPress={() =>
+            this.setState({ dialogView: true, selectedItem: item })
+          }
         >
           <Text style={{ fontSize: 24 }}>+</Text>
         </CustomActionButton>
@@ -108,6 +146,25 @@ export default class ViewItem extends Component {
         {/* Content Start */}
         {this.state.loading ? (
           <View style={styles.content}>
+            {/* Add Item Dialog Box */}
+            <View>
+              <Dialog.Container visible={this.state.dialogView}>
+                <Dialog.Title>Add to Cart</Dialog.Title>
+                <Dialog.Description>
+                  Do you want to add item to your cart?
+                </Dialog.Description>
+                <Dialog.Button
+                  label="Cancel"
+                  onPress={() =>
+                    this.setState({ dialogView: false, selectedItem: {} })
+                  }
+                />
+                <Dialog.Button
+                  label="Yes"
+                  onPress={() => this.addToCart(this.state.selectedItem)}
+                />
+              </Dialog.Container>
+            </View>
             <View
               style={{
                 minHeight: 100,

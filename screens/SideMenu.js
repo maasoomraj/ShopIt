@@ -66,26 +66,6 @@ export default class HomeScreen extends Component {
         {/* Header End */}
         {this.state.loading ? (
           <View style={styles.content}>
-            {/* <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("HomeScreen", {
-                  user: this.state.user,
-                })
-              }
-            >
-              <View
-                style={{
-                  height: 70,
-                  marginBottom: 10,
-                  borderBottomWidth: 0.5,
-                  borderColor: "black",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text>Home</Text>
-              </View>
-            </TouchableOpacity> */}
             <MenuList
               onPress={() =>
                 this.props.navigation.navigate("HomeScreen", {
@@ -104,6 +84,16 @@ export default class HomeScreen extends Component {
               }
             >
               <Text>My Menu</Text>
+            </MenuList>
+
+            <MenuList
+              onPress={() =>
+                this.props.navigation.navigate("MyCart", {
+                  user: this.state.user,
+                })
+              }
+            >
+              <Text>My Cart</Text>
             </MenuList>
 
             <MenuList
