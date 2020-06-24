@@ -7,6 +7,7 @@ import "firebase/auth";
 
 import { Ionicons } from "@expo/vector-icons";
 import PageLoading from "../components/PageLoading";
+import Footer from "../components/Footer";
 
 class SettingsScreen extends React.Component {
   constructor() {
@@ -81,11 +82,8 @@ class SettingsScreen extends React.Component {
         ) : (
           <PageLoading />
         )}
-        {/* Footer Start */}
-        <View style={styles.footer}>
-          <Text>Footer</Text>
-        </View>
-        {/* Footer End */}
+
+        <Footer props={this.props} user={this.state.user} />
       </View>
     );
   }
@@ -96,7 +94,7 @@ export default SettingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: color.white,
   },
   header: {
     height: 80,

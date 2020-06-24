@@ -13,7 +13,8 @@ import Dialog from "react-native-dialog";
 
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
-import { snapshotToArray } from "../helpers/firebaseHelpers";
+import Footer from "../components/Footer";
+import { snapshotToArray, snapshotToMap } from "../helpers/firebaseHelpers";
 import PageLoading from "../components/PageLoading";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -48,13 +49,44 @@ export default class ViewItem extends Component {
 
     const itemsArray = snapshotToArray(items);
 
+    // Get list of all cart list
+    const myCartMenu = await firebase
+      .database()
+      .ref("cart/")
+      .child(user.uid)
+      .once("value");
+    // Convert Snapshot to Array
+    const cartMenu = snapshotToArray(myCartMenu);
+
     this.setState({
       restaurant: restaurant,
       user: user,
       menu: itemsArray,
       loading: true,
+      cartMenu: cartMenu,
     });
   }
+
+  checkCartForItem = () => {
+    if (this.state.selectedItem) {
+      let found;
+      for (let i in this.state.cartMenu) {
+        if (this.state.cartMenu[i].item.key === this.state.selectedItem.key) {
+          found = 1;
+          break;
+        }
+      }
+
+      console.log("found - " + found);
+
+      if (found) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+    return 0;
+  };
 
   addToCart = async (item) => {
     try {
@@ -147,24 +179,42 @@ export default class ViewItem extends Component {
         {this.state.loading ? (
           <View style={styles.content}>
             {/* Add Item Dialog Box */}
-            <View>
-              <Dialog.Container visible={this.state.dialogView}>
-                <Dialog.Title>Add to Cart</Dialog.Title>
-                <Dialog.Description>
-                  Do you want to add item to your cart?
-                </Dialog.Description>
-                <Dialog.Button
-                  label="Cancel"
-                  onPress={() =>
-                    this.setState({ dialogView: false, selectedItem: {} })
-                  }
-                />
-                <Dialog.Button
-                  label="Yes"
-                  onPress={() => this.addToCart(this.state.selectedItem)}
-                />
-              </Dialog.Container>
-            </View>
+            {this.state.dialogView && this.checkCartForItem() == 1 ? (
+              <View>
+                <Dialog.Container visible={this.state.dialogView}>
+                  <Dialog.Title>Add to Cart</Dialog.Title>
+                  <Dialog.Description>Added to cart</Dialog.Description>
+                  <Dialog.Button
+                    label="Ok"
+                    onPress={() =>
+                      this.setState({ dialogView: false, selectedItem: {} })
+                    }
+                  />
+                </Dialog.Container>
+              </View>
+            ) : (
+              <View>
+                <Dialog.Container visible={this.state.dialogView}>
+                  <Dialog.Title>Add to Cart</Dialog.Title>
+                  <Dialog.Description>
+                    Do you want to add item to your cart?
+                  </Dialog.Description>
+                  <Dialog.Button
+                    label="Cancel"
+                    onPress={() =>
+                      this.setState({ dialogView: false, selectedItem: {} })
+                    }
+                  />
+                  <Dialog.Button
+                    label="Yes"
+                    onPress={() => {
+                      this.addToCart(this.state.selectedItem);
+                      this.forceUpdate();
+                    }}
+                  />
+                </Dialog.Container>
+              </View>
+            )}
             <View
               style={{
                 minHeight: 100,
@@ -202,11 +252,7 @@ export default class ViewItem extends Component {
         )}
         {/* Content End */}
 
-        {/* Footer Start */}
-        <View style={styles.footer}>
-          <Text>Footer</Text>
-        </View>
-        {/* Footer End */}
+        <Footer props={this.props} user={this.state.user} />
       </View>
     );
   }
@@ -215,7 +261,7 @@ export default class ViewItem extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: color.white,
   },
   header: {
     height: 80,
@@ -233,12 +279,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  footer: {
-    height: 70,
-    alignItems: "center",
-    borderTopColor: "#0d0d0d",
-    borderTopWidth: 0.5,
   },
   content: {
     flex: 1,

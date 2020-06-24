@@ -10,6 +10,7 @@ import {
 
 import color from "../assets/colors";
 import PageLoading from "../components/PageLoading";
+import Footer from "../components/Footer";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -83,7 +84,7 @@ export default class HomeScreen extends Component {
       <View style={styles.container}>
         {/* Header Start */}
         <View style={styles.header}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate("SideMenu", {
                 user: this.state.user,
@@ -93,7 +94,7 @@ export default class HomeScreen extends Component {
             <View style={styles.headerButton}>
               <Ionicons name="ios-menu" size={32} color="black" />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View style={styles.headerText}>
             <Text>ShopIt</Text>
           </View>
@@ -112,11 +113,7 @@ export default class HomeScreen extends Component {
           <PageLoading />
         )}
 
-        {/* Footer Start */}
-        <View style={styles.footer}>
-          <Text>Footer</Text>
-        </View>
-        {/* Footer End */}
+        <Footer props={this.props} user={this.state.user} />
       </View>
     );
   }
@@ -125,7 +122,7 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: color.white,
   },
   header: {
     height: 80,
@@ -143,12 +140,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  footer: {
-    height: 70,
-    alignItems: "center",
-    borderTopColor: "#0d0d0d",
-    borderTopWidth: 0.5,
   },
   content: {
     flex: 1,

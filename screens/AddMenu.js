@@ -11,6 +11,7 @@ import {
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
 import PageLoading from "../components/PageLoading";
+import Footer from "../components/Footer";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -368,11 +369,7 @@ export default class AddMenu extends Component {
           <PageLoading />
         )}
 
-        {/* Footer Start */}
-        <View style={styles.footer}>
-          <Text>Footer</Text>
-        </View>
-        {/* Footer End */}
+        <Footer props={this.props} user={this.state.user} />
       </View>
     );
   }
