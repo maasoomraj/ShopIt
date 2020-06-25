@@ -89,6 +89,7 @@ export default class ViewItem extends Component {
   };
 
   addToCart = async (item) => {
+    item.number = 1;
     try {
       const key = await firebase
         .database()

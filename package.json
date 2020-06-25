@@ -17,6 +17,7 @@
     "react-native-dialog": "^5.6.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-indicators": "^0.17.0",
+    "react-native-number-view": "^1.0.1",
     "react-native-screens": "^2.9.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^3.11.0",
