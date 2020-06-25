@@ -16,6 +16,7 @@ import Dialog from "react-native-dialog";
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
 import Footer from "../components/Footer";
+import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 import { snapshotToArray, snapshotToMap } from "../helpers/firebaseHelpers";
 import PageLoading from "../components/PageLoading";
@@ -43,6 +44,13 @@ export default class ViewItem extends Component {
     const restaurant = navigation.getParam("restaurant");
     const user = navigation.getParam("user");
 
+    // get user from database
+    const currentUser = await firebase
+      .database()
+      .ref("users")
+      .child(user.uid)
+      .once("value");
+
     const items = await firebase
       .database()
       .ref("menu")
@@ -63,7 +71,7 @@ export default class ViewItem extends Component {
 
     this.setState({
       restaurant: restaurant,
-      user: user,
+      user: currentUser.val(),
       menu: itemsArray,
       loading: true,
       cartMenu: cartMenu,
@@ -71,7 +79,7 @@ export default class ViewItem extends Component {
 
     BackHandler.addEventListener("hardwareBackPress", () =>
       this.props.navigation.navigate("HomeScreen", {
-        user: this.state.user,
+        user: currentUser.val(),
       })
     );
   }
@@ -245,7 +253,11 @@ export default class ViewItem extends Component {
         )}
         {/* Content End */}
 
-        <Footer props={this.props} user={this.state.user} />
+        {this.state.loading ? (
+          <Footer props={this.props} user={this.state.user} />
+        ) : (
+          <LoadingFooter />
+        )}
       </View>
     );
   }

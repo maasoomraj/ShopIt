@@ -12,6 +12,7 @@ import {
 import color from "../assets/colors";
 import PageLoading from "../components/PageLoading";
 import Footer from "../components/Footer";
+import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
@@ -98,7 +99,11 @@ export default class HomeScreen extends Component {
           <PageLoading />
         )}
 
-        <Footer props={this.props} user={this.state.user} />
+        {this.state.loading ? (
+          <Footer props={this.props} user={this.state.user} />
+        ) : (
+          <LoadingFooter />
+        )}
       </View>
     );
   }

@@ -15,6 +15,7 @@ import "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import PageLoading from "../components/PageLoading";
 import Footer from "../components/Footer";
+import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 
 class SettingsScreen extends React.Component {
@@ -44,7 +45,7 @@ class SettingsScreen extends React.Component {
 
     BackHandler.addEventListener("hardwareBackPress", () =>
       this.props.navigation.navigate("HomeScreen", {
-        user: this.state.user,
+        user: currentUser.val(),
       })
     );
   }
@@ -81,7 +82,11 @@ class SettingsScreen extends React.Component {
           <PageLoading />
         )}
 
-        <Footer props={this.props} user={this.state.user} />
+        {this.state.loading ? (
+          <Footer props={this.props} user={this.state.user} />
+        ) : (
+          <LoadingFooter />
+        )}
       </View>
     );
   }
