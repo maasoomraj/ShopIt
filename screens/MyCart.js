@@ -102,6 +102,27 @@ export default class HomeScreen extends Component {
     }
   };
 
+  removeFromCart = async (item) => {
+    console.log(item.key);
+    try {
+      await firebase
+        .database()
+        .ref("cart")
+        .child(this.state.user.uid)
+        .child(item.key)
+        .remove();
+
+      let cartMenu = this.state.cartMenu.filter(
+        (newItem) => newItem.key !== item.key
+      );
+      let reducedCost = item.item.number * item.item.cost;
+      let totalCost = this.state.totalCost - reducedCost;
+      this.setState({ cartMenu: cartMenu, totalCost: totalCost });
+    } catch (error) {
+      alert("Please try again.");
+    }
+  };
+
   itemDisplay = (item, index) => {
     return (
       <View
@@ -149,7 +170,7 @@ export default class HomeScreen extends Component {
                   rightContent={<Text style={{ fontSize: 22 }}>+</Text>}
                   onValueChange={(newVal) => {
                     if (newVal >= 0) {
-                      newCartMenu = this.state.cartMenu;
+                      let newCartMenu = this.state.cartMenu;
                       let totalCost = this.state.totalCost;
                       totalCost -=
                         newCartMenu[index].item.number *
@@ -173,6 +194,16 @@ export default class HomeScreen extends Component {
                 Cost - {item.item.cost * this.state.cartMenu[index].item.number}
               </Text>
             </View>
+            <CustomActionButton
+              onPress={() => this.removeFromCart(item)}
+              styleTouch={{
+                paddingTop: 10,
+                alignItems: "flex-end",
+              }}
+              style={{ width: 100, height: 30, borderRadius: 25 }}
+            >
+              <Text>Remove</Text>
+            </CustomActionButton>
           </View>
         </View>
       </View>
