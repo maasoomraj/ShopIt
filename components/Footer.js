@@ -13,6 +13,7 @@ const Footer = ({ props, user }) => (
       borderTopColor: "#0d0d0d",
       borderTopWidth: 0.5,
       flexDirection: "row",
+      backgroundColor: color.bgMain,
     }}
   >
     <TouchableOpacity
@@ -24,7 +25,7 @@ const Footer = ({ props, user }) => (
       }
     >
       <View>
-        <Ionicons name="ios-home" size={24} color={color.bgMain} />
+        <Ionicons name="ios-home" size={24} color={color.white} />
       </View>
     </TouchableOpacity>
 
@@ -37,7 +38,7 @@ const Footer = ({ props, user }) => (
       }
     >
       <View>
-        <Ionicons name="md-cart" size={24} color={color.bgMain} />
+        <Ionicons name="md-cart" size={24} color={color.white} />
       </View>
     </TouchableOpacity>
 
@@ -50,7 +51,7 @@ const Footer = ({ props, user }) => (
       }
     >
       <View>
-        <Entypo name="man" size={24} color={color.bgMain} />
+        <Entypo name="man" size={24} color={color.white} />
       </View>
     </TouchableOpacity>
 
@@ -63,7 +64,7 @@ const Footer = ({ props, user }) => (
       }
     >
       <View>
-        <Ionicons name="ios-settings" size={24} color={color.bgMain} />
+        <Ionicons name="ios-settings" size={24} color={color.white} />
       </View>
     </TouchableOpacity>
   </View>

@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  BackHandler,
+  StatusBar,
 } from "react-native";
 
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
 import PageLoading from "../components/PageLoading";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -96,6 +99,12 @@ export default class AddMenu extends Component {
       placeholderName: placeholderName,
       placeholderLocation: placeholderLocation,
     }));
+
+    BackHandler.addEventListener("hardwareBackPress", () =>
+      this.props.navigation.navigate("HomeScreen", {
+        user: this.state.user,
+      })
+    );
   }
 
   addRestaurant = async () => {
@@ -186,24 +195,7 @@ export default class AddMenu extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* Header Start */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("HomeScreen", {
-                user: this.state.user,
-              })
-            }
-          >
-            <View style={styles.headerButton}>
-              <Ionicons name="ios-arrow-round-back" size={32} color="black" />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.headerText}>
-            <Text>MY MENU</Text>
-          </View>
-        </View>
-        {/* Header End */}
+        <Header text="My Menu" />
         {this.state.loading ? (
           <View style={styles.content}>
             {this.state.addView ? (
@@ -378,30 +370,8 @@ export default class AddMenu extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    height: 80,
-    paddingTop: 30,
-    borderBottomColor: "#0d0d0d",
-    borderBottomWidth: 0.5,
-    flexDirection: "row",
-  },
-  headerButton: {
-    paddingLeft: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footer: {
-    height: 70,
-    alignItems: "center",
-    borderTopColor: "#0d0d0d",
-    borderTopWidth: 0.5,
+    backgroundColor: color.white,
+    marginTop: StatusBar.currentHeight,
   },
   content: {
     flex: 1,

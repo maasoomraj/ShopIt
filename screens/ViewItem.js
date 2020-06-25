@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Alert,
+  BackHandler,
+  StatusBar,
 } from "react-native";
 
 import Dialog from "react-native-dialog";
@@ -14,6 +16,7 @@ import Dialog from "react-native-dialog";
 import color from "../assets/colors";
 import CustomActionButton from "../components/CustomActionButton";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 import { snapshotToArray, snapshotToMap } from "../helpers/firebaseHelpers";
 import PageLoading from "../components/PageLoading";
 import { Ionicons } from "@expo/vector-icons";
@@ -65,6 +68,12 @@ export default class ViewItem extends Component {
       loading: true,
       cartMenu: cartMenu,
     });
+
+    BackHandler.addEventListener("hardwareBackPress", () =>
+      this.props.navigation.navigate("HomeScreen", {
+        user: this.state.user,
+      })
+    );
   }
 
   checkCartForItem = () => {
@@ -157,24 +166,7 @@ export default class ViewItem extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* Header Start */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("HomeScreen", {
-                user: this.state.user,
-              })
-            }
-          >
-            <View style={styles.headerButton}>
-              <Ionicons name="ios-arrow-round-back" size={32} color="black" />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.headerText}>
-            <Text>{this.state.restaurant.name}</Text>
-          </View>
-        </View>
-        {/* Header End */}
+        <Header text={this.state.restaurant.name} />
 
         {/* Content Start */}
         {this.state.loading ? (
@@ -263,23 +255,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: color.white,
-  },
-  header: {
-    height: 80,
-    paddingTop: 30,
-    borderBottomColor: "#0d0d0d",
-    borderBottomWidth: 0.5,
-    flexDirection: "row",
-  },
-  headerButton: {
-    paddingLeft: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    marginTop: StatusBar.currentHeight,
   },
   content: {
     flex: 1,
