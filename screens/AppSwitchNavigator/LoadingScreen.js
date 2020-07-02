@@ -9,8 +9,22 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import color from "../../assets/colors";
 import { MaterialIndicator } from "react-native-indicators";
+import { snapshotToArray } from "../../helpers/firebaseHelpers";
+
 import * as firebase from "firebase/app";
+import("firebase/database");
 import("firebase/auth");
+
+/////
+import {
+  SET_USER,
+  SET_CART_MENU,
+  SET_ORDERS,
+  SET_RESTAURANTS,
+  store,
+} from "../../helpers/redux-store";
+store.subscribe(() => console.log(store.getState()));
+//////
 
 export default class LoadingScreen extends Component {
   componentDidMount = () => {
@@ -18,14 +32,62 @@ export default class LoadingScreen extends Component {
     this.checkIfLoggedIn();
   };
 
-  checkIfLoggedIn = () => {
-    this.unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+  checkIfLoggedIn = async () => {
+    this.unsubscribe = await firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.props.navigation.navigate("HomeScreen", { user: user });
+        this.setUserData(user);
+        this.setUserCartMenu(user);
+        this.setUserOrders(user);
+        this.setRestaurants(user);
+        // this.props.navigation.navigate("HomeScreen", { user: user });
       } else {
         this.props.navigation.navigate("WelcomeScreen");
       }
     });
+  };
+
+  setUserData = async (user) => {
+    const currentUser = await firebase
+      .database()
+      .ref("users")
+      .child(user.uid)
+      .once("value");
+
+    store.dispatch(SET_USER(currentUser.val()));
+  };
+
+  setUserCartMenu = async (user) => {
+    const myCartMenu = await firebase
+      .database()
+      .ref("cart/")
+      .child(user.uid)
+      .once("value");
+    const cartMenu = snapshotToArray(myCartMenu);
+
+    store.dispatch(SET_CART_MENU(cartMenu));
+  };
+
+  setUserOrders = async (user) => {
+    const myOrders = await firebase
+      .database()
+      .ref("orders/")
+      .child(user.uid)
+      .once("value");
+
+    const orders = snapshotToArray(myOrders);
+    store.dispatch(SET_ORDERS(orders));
+  };
+
+  setRestaurants = async () => {
+    const restaurants = await firebase.database().ref("details/").once("value");
+
+    const newRestaurantsArray = snapshotToArray(restaurants);
+    let restaurantsArray = newRestaurantsArray.filter(
+      (restaurant) => restaurant.status === true
+    );
+    store.dispatch(SET_RESTAURANTS(restaurantsArray));
+
+    this.props.navigation.navigate("HomeScreen");
   };
 
   render() {

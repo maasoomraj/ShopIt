@@ -26,6 +26,8 @@ import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
 
+import { store } from "../helpers/redux-store";
+
 export default class ViewItem extends Component {
   constructor(props) {
     super(props);
@@ -42,14 +44,6 @@ export default class ViewItem extends Component {
   async componentDidMount() {
     const { navigation } = this.props;
     const restaurant = navigation.getParam("restaurant");
-    const user = navigation.getParam("user");
-
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
 
     const items = await firebase
       .database()
@@ -60,26 +54,16 @@ export default class ViewItem extends Component {
 
     const itemsArray = snapshotToArray(items);
 
-    // Get list of all cart list
-    const myCartMenu = await firebase
-      .database()
-      .ref("cart/")
-      .child(user.uid)
-      .once("value");
-    const cartMenu = snapshotToArray(myCartMenu);
-
     this.setState({
       restaurant: restaurant,
-      user: currentUser.val(),
+      user: store.getState().user,
       menu: itemsArray,
       loading: true,
-      cartMenu: cartMenu,
+      cartMenu: store.getState().cartMenu,
     });
 
     BackHandler.addEventListener("hardwareBackPress", () =>
-      this.props.navigation.navigate("HomeScreen", {
-        user: currentUser.val(),
-      })
+      this.props.navigation.navigate("HomeScreen")
     );
   }
 

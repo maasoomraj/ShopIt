@@ -18,6 +18,8 @@ import Footer from "../components/Footer";
 import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 
+import { store } from "../helpers/redux-store";
+
 class SettingsScreen extends React.Component {
   constructor() {
     super();
@@ -27,26 +29,29 @@ class SettingsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    // get user from authentication
-    const { navigation } = this.props;
-    const user = navigation.getParam("user");
+    // // get user from authentication
+    // const { navigation } = this.props;
+    // const user = navigation.getParam("user");
 
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
+    // // get user from database
+    // const currentUser = await firebase
+    //   .database()
+    //   .ref("users")
+    //   .child(user.uid)
+    //   .once("value");
+
+    // this.setState({
+    //   user: currentUser.val(),
+    //   loading: true,
+    // });
 
     this.setState({
-      user: currentUser.val(),
+      user: store.getState().user,
       loading: true,
     });
 
     BackHandler.addEventListener("hardwareBackPress", () =>
-      this.props.navigation.navigate("HomeScreen", {
-        user: currentUser.val(),
-      })
+      this.props.navigation.navigate("HomeScreen")
     );
   }
 

@@ -24,6 +24,8 @@ import CustomActionButton from "../components/CustomActionButton";
 import("firebase/auth");
 import("firebase/database");
 
+import { store } from "../helpers/redux-store";
+
 export default class MyCart extends Component {
   constructor(props) {
     super(props);
@@ -35,43 +37,23 @@ export default class MyCart extends Component {
     };
   }
 
-  async componentDidMount() {
-    // get user from authentication
-    const { navigation } = this.props;
-    const user = navigation.getParam("user");
-
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
-
-    // Get list of all restaurants
-    const myCartMenu = await firebase
-      .database()
-      .ref("cart/")
-      .child(user.uid)
-      .once("value");
-    // Convert Snapshot to Array
-    const cartMenu = snapshotToArray(myCartMenu);
-
+  componentDidMount() {
     let totalCost = 0;
-    for (let i in cartMenu) {
-      totalCost += cartMenu[i].item.number * cartMenu[i].item.cost;
+    for (let i in store.getState().cartMenu) {
+      totalCost +=
+        store.getState().cartMenu[i].item.number *
+        store.getState().cartMenu[i].item.cost;
     }
 
     this.setState({
-      user: currentUser.val(),
+      user: store.getState().user,
       loading: true,
-      cartMenu: cartMenu,
+      cartMenu: store.getState().cartMenu,
       totalCost: totalCost,
     });
 
     BackHandler.addEventListener("hardwareBackPress", () =>
-      this.props.navigation.navigate("HomeScreen", {
-        user: currentUser.val(),
-      })
+      this.props.navigation.navigate("HomeScreen")
     );
   }
 

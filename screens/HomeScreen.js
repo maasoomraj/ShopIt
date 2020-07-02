@@ -17,6 +17,10 @@ import Header from "../components/Header";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
 import { Ionicons } from "@expo/vector-icons";
 
+////
+import { store } from "../helpers/redux-store";
+////
+
 import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
@@ -30,31 +34,11 @@ export default class HomeScreen extends Component {
     };
   }
 
-  async componentDidMount() {
-    // get user from authentication
-    const { navigation } = this.props;
-    const user = navigation.getParam("user");
-
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
-
-    // Get list of all restaurants
-    const restaurants = await firebase.database().ref("details/").once("value");
-    // Convert Snapshot to Array
-    const newRestaurantsArray = snapshotToArray(restaurants);
-    // sort "ON" restaurants
-    let restaurantsArray = newRestaurantsArray.filter(
-      (restaurant) => restaurant.status === true
-    );
-
+  componentDidMount() {
     this.setState({
-      user: currentUser.val(),
+      user: store.getState().user,
       loading: true,
-      restaurants: restaurantsArray,
+      restaurants: store.getState().restaurants,
     });
   }
 
@@ -83,6 +67,7 @@ export default class HomeScreen extends Component {
   };
 
   render() {
+    console.log(store.getState());
     return (
       <View style={styles.container}>
         <Header text="ShopIt" />

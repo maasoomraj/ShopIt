@@ -24,6 +24,8 @@ import CustomActionButton from "../components/CustomActionButton";
 import("firebase/auth");
 import("firebase/database");
 
+import { store } from "../helpers/redux-store";
+
 export default class MyOrders extends Component {
   constructor(props) {
     super(props);
@@ -33,37 +35,15 @@ export default class MyOrders extends Component {
     };
   }
 
-  async componentDidMount() {
-    // get user from authentication
-    const { navigation } = this.props;
-    const user = navigation.getParam("user");
-
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
-
-    // Get list of all restaurants
-    const myOrders = await firebase
-      .database()
-      .ref("orders/")
-      .child(user.uid)
-      .once("value");
-    // Convert Snapshot to Array
-    const orders = snapshotToArray(myOrders);
-
+  componentDidMount() {
     this.setState({
-      user: currentUser.val(),
+      user: store.getState().user,
       loading: true,
-      orders: orders,
+      orders: store.getState().orders,
     });
 
     BackHandler.addEventListener("hardwareBackPress", () =>
-      this.props.navigation.navigate("SettingsScreen", {
-        user: currentUser.val(),
-      })
+      this.props.navigation.navigate("SettingsScreen")
     );
   }
 
