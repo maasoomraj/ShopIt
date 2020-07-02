@@ -24,7 +24,7 @@ import CustomActionButton from "../components/CustomActionButton";
 import("firebase/auth");
 import("firebase/database");
 
-export default class HomeScreen extends Component {
+export default class MyCart extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -90,11 +90,29 @@ export default class HomeScreen extends Component {
         .child(key)
         .set(
           {
-            orderNumber: key,
             totalCost: this.state.totalCost,
             order: this.state.cartMenu,
+            status: "incomplete",
           },
           async () => {
+            for (let i in this.state.cartMenu) {
+              const resId = this.state.cartMenu[i].restaurant.key;
+
+              const resKey = await firebase
+                .database()
+                .ref("receiveOrder")
+                .child(resId)
+                .push().key;
+              await firebase
+                .database()
+                .ref("receiveOrder")
+                .child(resId)
+                .child(resKey)
+                .set({
+                  user: this.state.user,
+                  item: this.state.cartMenu[i].item,
+                });
+            }
             await firebase
               .database()
               .ref("cart")
@@ -208,9 +226,14 @@ export default class HomeScreen extends Component {
                 paddingTop: 10,
                 alignItems: "flex-end",
               }}
-              style={{ width: 100, height: 30, borderRadius: 25 }}
+              style={{
+                width: 100,
+                height: 30,
+                borderRadius: 25,
+                backgroundColor: "#400807",
+              }}
             >
-              <Text>Remove</Text>
+              <Text style={{ color: "#fff" }}>Remove</Text>
             </CustomActionButton>
           </View>
         </View>
@@ -253,7 +276,9 @@ export default class HomeScreen extends Component {
                     width: 100,
                     height: 40,
                     borderRadius: 25,
-                    backgroundColor: "#0D91DD",
+                    backgroundColor: "#F0C148",
+                    borderWidth: 1,
+                    borderColor: color.black,
                   }}
                   styleTouch={{
                     justifyContent: "center",

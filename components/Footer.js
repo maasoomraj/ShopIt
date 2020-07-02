@@ -45,7 +45,7 @@ const Footer = ({ props, user }) => (
     <TouchableOpacity
       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
       onPress={() =>
-        props.navigation.navigate("AddMenu", {
+        props.navigation.navigate("ReceiveOrders", {
           user: user,
         })
       }

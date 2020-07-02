@@ -66,7 +66,6 @@ export default class ViewItem extends Component {
       .ref("cart/")
       .child(user.uid)
       .once("value");
-    // Convert Snapshot to Array
     const cartMenu = snapshotToArray(myCartMenu);
 
     this.setState({
@@ -114,7 +113,7 @@ export default class ViewItem extends Component {
         .child(this.state.user.uid)
         .push().key;
 
-      await firebase
+      let itemAdded = await firebase
         .database()
         .ref("cart/")
         .child(this.state.user.uid)
@@ -124,7 +123,10 @@ export default class ViewItem extends Component {
           restaurant: this.state.restaurant,
         });
 
-      this.setState({ dialogView: false, selectedItem: {} });
+      this.setState((previous) => ({
+        dialogView: false,
+        selectedItem: {},
+      }));
       ToastAndroid.showWithGravity(
         "Item was successfully added to your cart",
         ToastAndroid.SHORT,

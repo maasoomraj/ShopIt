@@ -86,7 +86,6 @@ export default class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <Header text="ShopIt" />
-
         {this.state.loading ? (
           <View style={styles.content}>
             <FlatList
@@ -98,7 +97,6 @@ export default class HomeScreen extends Component {
         ) : (
           <PageLoading />
         )}
-
         {this.state.loading ? (
           <Footer props={this.props} user={this.state.user} />
         ) : (

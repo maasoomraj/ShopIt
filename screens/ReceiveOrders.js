@@ -50,69 +50,14 @@ class SettingsScreen extends React.Component {
     );
   }
 
-  logout = async () => {
-    try {
-      await firebase.auth().signOut();
-      this.props.navigation.navigate("WelcomeScreen");
-    } catch (error) {
-      alert("Unable to Logout right now.");
-    }
-  };
-
   render() {
     return (
       <View style={styles.container}>
-        <Header text="Settings" />
+        <Header text="Orders !!" />
 
         {this.state.loading ? (
           <View style={styles.content}>
-            {/* <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CustomActionButton style={styles.logout} >
-                <Text style={styles.text}>Log Out</Text>
-              </CustomActionButton>
-              <CustomActionButton
-                style={styles.logout}
-                
-              >
-                <Text style={styles.text}>My Orders</Text>
-              </CustomActionButton>
-            </View> */}
-
-            <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("MyOrders", {
-                  user: this.state.user,
-                })
-              }
-            >
-              <View style={styles.view}>
-                <Text style={styles.text}>My Orders</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("AddMenu", {
-                  user: this.state.user,
-                })
-              }
-            >
-              <View style={styles.view}>
-                <Text style={styles.text}>My Restaurant</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={this.logout}>
-              <View style={styles.view}>
-                <Text style={styles.text}>Logout</Text>
-              </View>
-            </TouchableOpacity>
+            <Text>{this.state.user.uid}</Text>
           </View>
         ) : (
           <PageLoading />

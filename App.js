@@ -28,6 +28,9 @@ import AddMenu from "./screens/AddMenu";
 import SideMenu from "./screens/SideMenu";
 import ViewItem from "./screens/ViewItem";
 import MyCart from "./screens/MyCart";
+import MyOrders from "./screens/MyOrders";
+import ReceiveOrders from "./screens/ReceiveOrders";
+
 import color from "./assets/colors";
 
 import * as firebase from "firebase/app";
@@ -128,6 +131,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   SettingsScreen,
   SideMenu,
   MyCart,
+  MyOrders,
+  ReceiveOrders,
   // AppStackNavigator,
   // ItemDisplayNavigator,
   // AppDrawNavigator,
