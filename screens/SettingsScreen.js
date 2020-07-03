@@ -19,6 +19,7 @@ import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 
 import { store } from "../helpers/redux-store";
+import { Switch } from "react-native-gesture-handler";
 
 class SettingsScreen extends React.Component {
   constructor() {
@@ -29,22 +30,6 @@ class SettingsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    // // get user from authentication
-    // const { navigation } = this.props;
-    // const user = navigation.getParam("user");
-
-    // // get user from database
-    // const currentUser = await firebase
-    //   .database()
-    //   .ref("users")
-    //   .child(user.uid)
-    //   .once("value");
-
-    // this.setState({
-    //   user: currentUser.val(),
-    //   loading: true,
-    // });
-
     this.setState({
       user: store.getState().user,
       loading: true,
@@ -71,24 +56,6 @@ class SettingsScreen extends React.Component {
 
         {this.state.loading ? (
           <View style={styles.content}>
-            {/* <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CustomActionButton style={styles.logout} >
-                <Text style={styles.text}>Log Out</Text>
-              </CustomActionButton>
-              <CustomActionButton
-                style={styles.logout}
-                
-              >
-                <Text style={styles.text}>My Orders</Text>
-              </CustomActionButton>
-            </View> */}
-
             <TouchableOpacity
               onPress={() =>
                 this.props.navigation.navigate("MyOrders", {
@@ -102,11 +69,7 @@ class SettingsScreen extends React.Component {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("AddMenu", {
-                  user: this.state.user,
-                })
-              }
+              onPress={() => this.props.navigation.navigate("MyRestaurant")}
             >
               <View style={styles.view}>
                 <Text style={styles.text}>My Restaurant</Text>

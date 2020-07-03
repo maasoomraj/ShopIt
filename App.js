@@ -30,6 +30,8 @@ import ViewItem from "./screens/ViewItem";
 import MyCart from "./screens/MyCart";
 import MyOrders from "./screens/MyOrders";
 import ReceiveOrders from "./screens/ReceiveOrders";
+import MyRestaurant from "./screens/MyRestaurant";
+import RestaurantDetails from "./screens/RestaurantDetails";
 
 import color from "./assets/colors";
 
@@ -133,6 +135,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   MyCart,
   MyOrders,
   ReceiveOrders,
+  MyRestaurant,
+  RestaurantDetails,
   // AppStackNavigator,
   // ItemDisplayNavigator,
   // AppDrawNavigator,

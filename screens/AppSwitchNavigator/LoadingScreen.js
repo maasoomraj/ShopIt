@@ -77,10 +77,10 @@ export default class LoadingScreen extends Component {
     const restaurants = await firebase.database().ref("details/").once("value");
 
     const newRestaurantsArray = snapshotToArray(restaurants);
-    let restaurantsArray = newRestaurantsArray.filter(
-      (restaurant) => restaurant.status === true
-    );
-    store.dispatch(SET_RESTAURANTS(restaurantsArray));
+    // let restaurantsArray = newRestaurantsArray.filter(
+    //   (restaurant) => restaurant.status === true
+    // );
+    store.dispatch(SET_RESTAURANTS(newRestaurantsArray));
 
     this.props.navigation.navigate("HomeScreen");
   };

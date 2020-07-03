@@ -17,11 +17,12 @@ import Footer from "../components/Footer";
 import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
 import { snapshotToArray } from "../helpers/firebaseHelpers";
-import { Ionicons } from "@expo/vector-icons";
 
 import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
+
+import { store } from "../helpers/redux-store";
 
 export default class AddMenu extends Component {
   constructor(props) {
@@ -41,35 +42,21 @@ export default class AddMenu extends Component {
   }
 
   async componentDidMount() {
-    // get user from authentication
-    const { navigation } = this.props;
-    const user = navigation.getParam("user");
-
-    // get user from database
-    const currentUser = await firebase
-      .database()
-      .ref("users")
-      .child(user.uid)
-      .once("value");
-
     let status;
-    let placeholderName, placeholderLocation;
     try {
       const available = await firebase
         .database()
         .ref("details/")
-        .child(currentUser.val().uid)
+        .child(store.getState().user.uid)
         .orderByChild("name")
         .once("value");
 
       status = available.val().status;
-      placeholderName = available.val().name;
-      placeholderLocation = available.val().location;
     } catch (error) {
       await firebase
         .database()
         .ref("details/")
-        .child(currentUser.val().uid)
+        .child(store.getState().user.uid)
         .set(
           {
             name: "**-Name-**",
@@ -78,71 +65,42 @@ export default class AddMenu extends Component {
           },
           () => alert("You donot have restaurant on. Use ON")
         );
-
-      placeholderName = "**-Name-**";
-      placeholderLocation = "**-Location-**";
       status = false;
     }
 
     const items = await firebase
       .database()
       .ref("menu/")
-      .child(currentUser.val().uid)
+      .child(store.getState().user.uid)
       .once("value");
 
     const itemsArray = snapshotToArray(items);
 
     this.setState((state) => ({
-      user: currentUser.val(),
+      user: store.getState().user,
       loading: true,
       items: itemsArray,
       addRestaurant: status,
-      placeholderName: placeholderName,
-      placeholderLocation: placeholderLocation,
     }));
 
     BackHandler.addEventListener("hardwareBackPress", () =>
-      this.props.navigation.navigate("HomeScreen", {
-        user: currentUser.val(),
-      })
+      this.props.navigation.navigate("MyRestaurant")
     );
   }
 
-  addRestaurant = async () => {
-    // create restaurant in db
-    try {
-      await firebase
-        .database()
-        .ref("details/")
-        .child(this.state.user.uid)
-        .update({
-          name: this.state.restaurantName,
-          location: this.state.restaurantLocation,
-          status: true,
-        });
-
-      this.setState({ addRestaurant: true, addRestaurantView: false });
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  offRestaurant = async () => {
-    // create restaurant in db
-    try {
-      await firebase
-        .database()
-        .ref("details/")
-        .child(this.state.user.uid)
-        .update({
-          status: false,
-        });
-    } catch (error) {
-      alert(error);
-    }
-  };
-
   addItem = async () => {
+    if (this.state.itemName === "") {
+      alert("Please enter all fields");
+      return;
+    }
+    if (this.state.itemCost === "") {
+      alert("Please enter all fields");
+      return;
+    }
+    if (this.state.itemQuantity === "") {
+      alert("Please enter all fields");
+      return;
+    }
     try {
       const key = await firebase
         .database()
@@ -246,59 +204,6 @@ export default class AddMenu extends Component {
               </View>
             ) : null}
 
-            {this.state.addRestaurantView ? (
-              <View style={styles.onAddClick}>
-                <View style={styles.addViewTextView}>
-                  <Text>Enter Details to Add Your Restaurant -</Text>
-                </View>
-                <TextInput
-                  style={styles.addViewTextInput}
-                  placeholder={
-                    this.state.placeholderName === "**-Name-**"
-                      ? "Restaurant Name (eg. Crossroads Chicken Service )"
-                      : this.state.placeholderName
-                  }
-                  onChangeText={(text) =>
-                    this.setState({ restaurantName: text })
-                  }
-                />
-                <TextInput
-                  style={styles.addViewTextInput}
-                  placeholder={
-                    this.state.placeholderName === "**-Location-**"
-                      ? "Location (eg. Ali Road, Gaya )"
-                      : this.state.placeholderLocation
-                  }
-                  onChangeText={(text) =>
-                    this.setState({ restaurantLocation: text })
-                  }
-                />
-
-                <View style={styles.addViewAddCancel}>
-                  <CustomActionButton
-                    style={styles.addViewAddView}
-                    styleTouch={styles.addViewAddTouch}
-                    onPress={this.addRestaurant}
-                  >
-                    <Text style={styles.addViewAdd}>ON</Text>
-                  </CustomActionButton>
-                  <CustomActionButton
-                    style={styles.addViewCancelView}
-                    styleTouch={styles.addViewAddTouch}
-                    onPress={() =>
-                      this.setState({
-                        addRestaurantView: false,
-                        restaurantName: "",
-                        restaurantLocation: "",
-                      })
-                    }
-                  >
-                    <Text style={styles.addViewAdd}>Cancel</Text>
-                  </CustomActionButton>
-                </View>
-              </View>
-            ) : null}
-
             <View style={{ justifyContent: "center", alignItems: "center" }}>
               <Text
                 style={{ fontSize: 18, color: color.bgMain, fontWeight: "700" }}
@@ -324,39 +229,6 @@ export default class AddMenu extends Component {
               </View>
             </TouchableOpacity>
             {/* AddButton End */}
-
-            {/* Restaurant Start */}
-            {this.state.addRestaurant ? (
-              <TouchableOpacity
-                style={styles.restaurantTouch}
-                onPress={() => {
-                  this.offRestaurant();
-                  this.setState({ addRestaurant: false });
-                }}
-              >
-                <View style={styles.restaurantButtonOn}>
-                  <Text style={styles.restaurantText}>ON</Text>
-                </View>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.restaurantTouch}
-                onPress={() =>
-                  this.setState({
-                    addRestaurantView: true,
-                    addView: false,
-                    itemName: "",
-                    itemQuantity: "",
-                    itemCost: 0,
-                  })
-                }
-              >
-                <View style={styles.restaurantButtonOff}>
-                  <Text style={styles.restaurantText}>OFF</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            {/* Restaurant End */}
           </View>
         ) : (
           <PageLoading />
@@ -457,11 +329,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "red",
     marginBottom: 5,
-  },
-  addViewAdd: {},
-  onAddClick: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#0d0d0d",
   },
   itemDisplayView: {
     minHeight: 80,

@@ -26,10 +26,13 @@ export default class HomeScreen extends Component {
   }
 
   componentDidMount() {
+    let restaurantsArray = store
+      .getState()
+      .restaurants.filter((restaurant) => restaurant.status === true);
     this.setState({
       user: store.getState().user,
       loading: true,
-      restaurants: store.getState().restaurants,
+      restaurants: restaurantsArray,
     });
   }
 

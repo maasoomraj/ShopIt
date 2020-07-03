@@ -20,7 +20,7 @@ import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
 
-import { store, REMOVE_FROM_CART } from "../helpers/redux-store";
+import { store, REMOVE_FROM_CART, CART_EMPTY } from "../helpers/redux-store";
 
 export default class MyCart extends Component {
   constructor(props) {
@@ -98,6 +98,7 @@ export default class MyCart extends Component {
               .remove();
 
             this.setState({ cartMenu: [], totalCost: 0 });
+            store.dispatch(CART_EMPTY());
             alert("Order successfully Placed.");
           }
         );

@@ -46,6 +46,12 @@ const REMOVE_FROM_CART = (item) => {
   };
 };
 
+const CART_EMPTY = () => {
+  return {
+    type: "CART_EMPTY",
+  };
+};
+
 const reducer = (
   state = { user: {}, cartMenu: [], orders: [], restaurants: [] },
   action
@@ -74,6 +80,9 @@ const reducer = (
         ),
       };
     }
+    case "CART_EMPTY": {
+      return { ...state, cartMenu: [] };
+    }
   }
 };
 let store = createStore(reducer);
@@ -85,5 +94,6 @@ export {
   SET_RESTAURANTS,
   ADD_TO_CART,
   REMOVE_FROM_CART,
+  CART_EMPTY,
   store,
 };
