@@ -62,6 +62,12 @@ export default class AddMenu extends Component {
     }
 
     try {
+      const newItem = {
+        name: this.state.itemName,
+        quantity: this.state.itemQuantity,
+        cost: this.state.itemCost,
+      };
+
       const key = await firebase
         .database()
         .ref("menu/")
@@ -73,17 +79,7 @@ export default class AddMenu extends Component {
         .ref("menu/")
         .child(this.state.user.uid)
         .child(key)
-        .set({
-          name: this.state.itemName,
-          quantity: this.state.itemQuantity,
-          cost: this.state.itemCost,
-        });
-
-      const newItem = {
-        name: this.state.itemName,
-        quantity: this.state.itemQuantity,
-        cost: this.state.itemCost,
-      };
+        .set(newItem);
 
       this.setState((prevState) => ({
         items: [...prevState.items, newItem],

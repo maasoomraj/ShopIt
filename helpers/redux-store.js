@@ -65,6 +65,12 @@ const ADD_MY_RESTAURANT_MENU_ITEM = (item) => {
     details: item,
   };
 };
+const BUY_ORDER = (order) => {
+  return {
+    type: "BUY_ORDER",
+    details: order,
+  };
+};
 
 const reducer = (
   state = {
@@ -112,6 +118,12 @@ const reducer = (
         myRestaurantMenu: [...state.myRestaurantMenu, action.details],
       };
     }
+    case "BUY_ORDER": {
+      return {
+        ...state,
+        orders: [...state.orders, action.details],
+      };
+    }
   }
 };
 let store = createStore(reducer);
@@ -126,5 +138,6 @@ export {
   CART_EMPTY,
   SET_MY_RESTAURANT_MENU,
   ADD_MY_RESTAURANT_MENU_ITEM,
+  BUY_ORDER,
   store,
 };
