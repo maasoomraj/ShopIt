@@ -3,8 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  TextInput,
   FlatList,
   BackHandler,
   StatusBar,
@@ -16,15 +14,13 @@ import PageLoading from "../components/PageLoading";
 import Footer from "../components/Footer";
 import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
-import { snapshotToArray } from "../helpers/firebaseHelpers";
-import { Ionicons } from "@expo/vector-icons";
+import CustomActionButton from "../components/CustomActionButton";
 
 import * as firebase from "firebase/app";
-import CustomActionButton from "../components/CustomActionButton";
 import("firebase/auth");
 import("firebase/database");
 
-import { store } from "../helpers/redux-store";
+import { store, REMOVE_FROM_CART } from "../helpers/redux-store";
 
 export default class MyCart extends Component {
   constructor(props) {
@@ -126,6 +122,8 @@ export default class MyCart extends Component {
       let reducedCost = item.item.number * item.item.cost;
       let totalCost = this.state.totalCost - reducedCost;
       this.setState({ cartMenu: cartMenu, totalCost: totalCost });
+
+      store.dispatch(REMOVE_FROM_CART(item));
     } catch (error) {
       alert("Please try again.");
     }

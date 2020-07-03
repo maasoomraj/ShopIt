@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   FlatList,
   StatusBar,
 } from "react-native";
@@ -14,16 +13,8 @@ import PageLoading from "../components/PageLoading";
 import Footer from "../components/Footer";
 import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
-import { snapshotToArray } from "../helpers/firebaseHelpers";
-import { Ionicons } from "@expo/vector-icons";
 
-////
 import { store } from "../helpers/redux-store";
-////
-
-import * as firebase from "firebase/app";
-import("firebase/auth");
-import("firebase/database");
 
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -48,7 +39,6 @@ export default class HomeScreen extends Component {
         onPress={() =>
           this.props.navigation.navigate("ViewItem", {
             restaurant: item,
-            user: this.state.user,
           })
         }
       >
@@ -67,7 +57,6 @@ export default class HomeScreen extends Component {
   };
 
   render() {
-    console.log(store.getState());
     return (
       <View style={styles.container}>
         <Header text="ShopIt" />

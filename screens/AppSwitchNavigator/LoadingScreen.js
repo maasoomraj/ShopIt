@@ -1,15 +1,10 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  YellowBox,
-} from "react-native";
+import { View, StyleSheet, YellowBox } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import color from "../../assets/colors";
 import { MaterialIndicator } from "react-native-indicators";
 import { snapshotToArray } from "../../helpers/firebaseHelpers";
+
+import color from "../../assets/colors";
 
 import * as firebase from "firebase/app";
 import("firebase/database");

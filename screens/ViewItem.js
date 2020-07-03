@@ -4,9 +4,7 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
   ToastAndroid,
-  Alert,
   BackHandler,
   StatusBar,
 } from "react-native";
@@ -18,15 +16,14 @@ import CustomActionButton from "../components/CustomActionButton";
 import Footer from "../components/Footer";
 import LoadingFooter from "../components/LoadingFooter";
 import Header from "../components/Header";
-import { snapshotToArray, snapshotToMap } from "../helpers/firebaseHelpers";
+import { snapshotToArray } from "../helpers/firebaseHelpers";
 import PageLoading from "../components/PageLoading";
-import { Ionicons } from "@expo/vector-icons";
 
 import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
 
-import { store } from "../helpers/redux-store";
+import { store, ADD_TO_CART } from "../helpers/redux-store";
 
 export default class ViewItem extends Component {
   constructor(props) {
@@ -59,7 +56,6 @@ export default class ViewItem extends Component {
       user: store.getState().user,
       menu: itemsArray,
       loading: true,
-      cartMenu: store.getState().cartMenu,
     });
 
     BackHandler.addEventListener("hardwareBackPress", () =>
@@ -69,9 +65,11 @@ export default class ViewItem extends Component {
 
   checkCartForItem = () => {
     if (this.state.selectedItem) {
-      let found;
-      for (let i in this.state.cartMenu) {
-        if (this.state.cartMenu[i].item.key === this.state.selectedItem.key) {
+      let found = 0;
+      for (let i in store.getState().cartMenu) {
+        if (
+          store.getState().cartMenu[i].item.key === this.state.selectedItem.key
+        ) {
           found = 1;
           break;
         }
@@ -111,6 +109,8 @@ export default class ViewItem extends Component {
         dialogView: false,
         selectedItem: {},
       }));
+      store.dispatch(ADD_TO_CART(item, key, this.state.restaurant));
+
       ToastAndroid.showWithGravity(
         "Item was successfully added to your cart",
         ToastAndroid.SHORT,
