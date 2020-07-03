@@ -16,6 +16,7 @@ import {
   SET_CART_MENU,
   SET_ORDERS,
   SET_RESTAURANTS,
+  SET_MY_RESTAURANT_MENU,
   store,
 } from "../../helpers/redux-store";
 store.subscribe(() => console.log(store.getState()));
@@ -34,6 +35,7 @@ export default class LoadingScreen extends Component {
         this.setUserCartMenu(user);
         this.setUserOrders(user);
         this.setRestaurants(user);
+        this.setRestaurantMenu(user);
         // this.props.navigation.navigate("HomeScreen", { user: user });
       } else {
         this.props.navigation.navigate("WelcomeScreen");
@@ -73,13 +75,21 @@ export default class LoadingScreen extends Component {
     store.dispatch(SET_ORDERS(orders));
   };
 
+  setRestaurantMenu = async (user) => {
+    const items = await firebase
+      .database()
+      .ref("menu/")
+      .child(user.uid)
+      .once("value");
+
+    const itemsArray = snapshotToArray(items);
+    store.dispatch(SET_MY_RESTAURANT_MENU(itemsArray));
+  };
+
   setRestaurants = async () => {
     const restaurants = await firebase.database().ref("details/").once("value");
 
     const newRestaurantsArray = snapshotToArray(restaurants);
-    // let restaurantsArray = newRestaurantsArray.filter(
-    //   (restaurant) => restaurant.status === true
-    // );
     store.dispatch(SET_RESTAURANTS(newRestaurantsArray));
 
     this.props.navigation.navigate("HomeScreen");

@@ -52,8 +52,28 @@ const CART_EMPTY = () => {
   };
 };
 
+const SET_MY_RESTAURANT_MENU = (menu) => {
+  return {
+    type: "SET_MY_RESTAURANT_MENU",
+    details: menu,
+  };
+};
+
+const ADD_MY_RESTAURANT_MENU_ITEM = (item) => {
+  return {
+    type: "ADD_MY_RESTAURANT_MENU_ITEM",
+    details: item,
+  };
+};
+
 const reducer = (
-  state = { user: {}, cartMenu: [], orders: [], restaurants: [] },
+  state = {
+    user: {},
+    cartMenu: [],
+    orders: [],
+    restaurants: [],
+    myRestaurantMenu: [],
+  },
   action
 ) => {
   switch (action.type) {
@@ -83,6 +103,15 @@ const reducer = (
     case "CART_EMPTY": {
       return { ...state, cartMenu: [] };
     }
+    case "SET_MY_RESTAURANT_MENU": {
+      return { ...state, myRestaurantMenu: action.details };
+    }
+    case "ADD_MY_RESTAURANT_MENU_ITEM": {
+      return {
+        ...state,
+        myRestaurantMenu: [...state.myRestaurantMenu, action.details],
+      };
+    }
   }
 };
 let store = createStore(reducer);
@@ -95,5 +124,7 @@ export {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   CART_EMPTY,
+  SET_MY_RESTAURANT_MENU,
+  ADD_MY_RESTAURANT_MENU_ITEM,
   store,
 };

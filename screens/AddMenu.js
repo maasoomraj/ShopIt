@@ -22,7 +22,7 @@ import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
 
-import { store } from "../helpers/redux-store";
+import { store, ADD_MY_RESTAURANT_MENU_ITEM } from "../helpers/redux-store";
 
 export default class AddMenu extends Component {
   constructor(props) {
@@ -34,53 +34,16 @@ export default class AddMenu extends Component {
       itemCost: 0,
       items: [],
       addRestaurant: false,
-      restaurantName: "",
-      restaurantLocation: "",
       user: {},
       loading: false,
     };
   }
 
   async componentDidMount() {
-    let status;
-    try {
-      const available = await firebase
-        .database()
-        .ref("details/")
-        .child(store.getState().user.uid)
-        .orderByChild("name")
-        .once("value");
-
-      status = available.val().status;
-    } catch (error) {
-      await firebase
-        .database()
-        .ref("details/")
-        .child(store.getState().user.uid)
-        .set(
-          {
-            name: "**-Name-**",
-            location: "**-Location-**",
-            status: false,
-          },
-          () => alert("You donot have restaurant on. Use ON")
-        );
-      status = false;
-    }
-
-    const items = await firebase
-      .database()
-      .ref("menu/")
-      .child(store.getState().user.uid)
-      .once("value");
-
-    const itemsArray = snapshotToArray(items);
-
     this.setState((state) => ({
       user: store.getState().user,
       loading: true,
-      items: itemsArray,
-      addRestaurant: status,
+      items: store.getState().myRestaurantMenu,
     }));
 
     BackHandler.addEventListener("hardwareBackPress", () =>
@@ -89,18 +52,15 @@ export default class AddMenu extends Component {
   }
 
   addItem = async () => {
-    if (this.state.itemName === "") {
+    if (
+      this.state.itemName === "" ||
+      this.state.itemCost === "" ||
+      this.state.itemQuantity === ""
+    ) {
       alert("Please enter all fields");
       return;
     }
-    if (this.state.itemCost === "") {
-      alert("Please enter all fields");
-      return;
-    }
-    if (this.state.itemQuantity === "") {
-      alert("Please enter all fields");
-      return;
-    }
+
     try {
       const key = await firebase
         .database()
@@ -132,6 +92,8 @@ export default class AddMenu extends Component {
         itemCost: "",
         addView: false,
       }));
+
+      store.dispatch(ADD_MY_RESTAURANT_MENU_ITEM(newItem));
     } catch (error) {
       alert(error);
     }
@@ -204,13 +166,9 @@ export default class AddMenu extends Component {
               </View>
             ) : null}
 
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Text
-                style={{ fontSize: 18, color: color.bgMain, fontWeight: "700" }}
-              >
-                Items Added -
-              </Text>
-            </View>
+            <View
+              style={{ justifyContent: "center", alignItems: "center" }}
+            ></View>
             <FlatList
               data={this.state.items}
               renderItem={({ item }, index) => this.itemDisplay(item, index)}
