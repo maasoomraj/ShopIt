@@ -8,6 +8,7 @@ const SET_USER = (user) => {
 };
 
 const SET_CART_MENU = (cart) => {
+  console.log(cart);
   return {
     type: "SET_CART_MENU",
     details: cart,
@@ -15,6 +16,7 @@ const SET_CART_MENU = (cart) => {
 };
 
 const SET_ORDERS = (orders) => {
+  console.log(orders);
   return {
     type: "SET_ORDERS",
     details: orders,
@@ -25,17 +27,6 @@ const SET_RESTAURANTS = (restaurants) => {
   return {
     type: "SET_RESTAURANTS",
     details: restaurants,
-  };
-};
-
-const ADD_TO_CART = (item, key, restaurant) => {
-  return {
-    type: "ADD_TO_CART",
-    details: {
-      item: item,
-      key: key,
-      restaurant: restaurant,
-    },
   };
 };
 
@@ -95,9 +86,6 @@ const reducer = (
     case "SET_RESTAURANTS": {
       return { ...state, restaurants: action.details };
     }
-    case "ADD_TO_CART": {
-      return { ...state, cartMenu: [...state.cartMenu, action.details] };
-    }
     case "REMOVE_FROM_CART": {
       return {
         ...state,
@@ -133,7 +121,6 @@ export {
   SET_CART_MENU,
   SET_ORDERS,
   SET_RESTAURANTS,
-  ADD_TO_CART,
   REMOVE_FROM_CART,
   CART_EMPTY,
   SET_MY_RESTAURANT_MENU,

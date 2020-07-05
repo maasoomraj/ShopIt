@@ -45,13 +45,44 @@ export default class HomeScreen extends Component {
           })
         }
       >
-        <View style={styles.restaurantContainer}>
-          <View>
-            <Text style={styles.restaurantTitle}>{item.name}</Text>
-          </View>
-          <View>
-            <Text style={styles.restaurantLocation}>
-              Address - {item.location}
+        <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              width: 100,
+              height: 110,
+              backgroundColor: "#C4C4C4",
+              borderRadius: 20,
+              marginLeft: 20,
+              marginRight: 10,
+              marginTop: 14,
+              marginBottom: 14,
+            }}
+          ></View>
+          <View style={{ marginRight: 10, marginTop: 20, marginBottom: 20 }}>
+            <Text
+              style={{ fontSize: 22, fontWeight: "normal", color: "#000000" }}
+            >
+              {item.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "normal",
+                fontStyle: "italic",
+                color: "#000000",
+              }}
+            >
+              North Indian | Pure Veg
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "normal",
+                color: "#000000",
+              }}
+            >
+              Near {item.location}
             </Text>
           </View>
         </View>

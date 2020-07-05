@@ -19,7 +19,7 @@ import {
   SET_MY_RESTAURANT_MENU,
   store,
 } from "../../helpers/redux-store";
-store.subscribe(() => console.log(store.getState()));
+// store.subscribe(() => console.log(store.getState()));
 //////
 
 export default class LoadingScreen extends Component {

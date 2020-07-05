@@ -40,11 +40,11 @@ export default class MyCart extends Component {
 
   componentDidMount() {
     let totalCost = 0;
-    for (let i in store.getState().cartMenu) {
-      totalCost +=
-        store.getState().cartMenu[i].item.number *
-        store.getState().cartMenu[i].item.cost;
-    }
+    // for (let i in store.getState().cartMenu) {
+    //   totalCost +=
+    //     store.getState().cartMenu[i].item.number *
+    //     store.getState().cartMenu[i].item.cost;
+    // }
 
     this.setState({
       user: store.getState().user,
@@ -58,184 +58,240 @@ export default class MyCart extends Component {
     );
   }
 
-  buyOrder = async () => {
-    try {
-      const key = await firebase
-        .database()
-        .ref("orders")
-        .child(this.state.user.uid)
-        .push().key;
+  // buyOrder = async () => {
+  //   try {
+  //     const key = await firebase
+  //       .database()
+  //       .ref("orders")
+  //       .child(this.state.user.uid)
+  //       .push().key;
 
-      await firebase
-        .database()
-        .ref("orders")
-        .child(this.state.user.uid)
-        .child(key)
-        .set(
-          {
-            totalCost: this.state.totalCost,
-            order: this.state.cartMenu,
-            status: "incomplete",
-          },
-          async () => {
-            for (let i in this.state.cartMenu) {
-              const resId = this.state.cartMenu[i].restaurant.key;
+  //     await firebase
+  //       .database()
+  //       .ref("orders")
+  //       .child(this.state.user.uid)
+  //       .child(key)
+  //       .set(
+  //         {
+  //           totalCost: this.state.totalCost,
+  //           order: this.state.cartMenu,
+  //           status: "incomplete",
+  //         },
+  //         async () => {
+  //           for (let i in this.state.cartMenu) {
+  //             const resId = this.state.cartMenu[i].restaurant.key;
 
-              const resKey = await firebase
-                .database()
-                .ref("receiveOrder")
-                .child(resId)
-                .push().key;
-              await firebase
-                .database()
-                .ref("receiveOrder")
-                .child(resId)
-                .child(resKey)
-                .set({
-                  user: this.state.user,
-                  item: this.state.cartMenu[i].item,
-                });
-            }
-            await firebase
-              .database()
-              .ref("cart")
-              .child(this.state.user.uid)
-              .remove();
+  //             const resKey = await firebase
+  //               .database()
+  //               .ref("receiveOrder")
+  //               .child(resId)
+  //               .push().key;
+  //             await firebase
+  //               .database()
+  //               .ref("receiveOrder")
+  //               .child(resId)
+  //               .child(resKey)
+  //               .set({
+  //                 user: this.state.user,
+  //                 item: this.state.cartMenu[i].item,
+  //               });
+  //           }
+  //           await firebase
+  //             .database()
+  //             .ref("cart")
+  //             .child(this.state.user.uid)
+  //             .remove();
 
-            store.dispatch(
-              BUY_ORDER({
-                totalCost: this.state.totalCost,
-                order: this.state.cartMenu,
-                status: "incomplete",
-              })
-            );
-            this.setState({ cartMenu: [], totalCost: 0 });
-            store.dispatch(CART_EMPTY());
+  //           store.dispatch(
+  //             BUY_ORDER({
+  //               totalCost: this.state.totalCost,
+  //               order: this.state.cartMenu,
+  //               status: "incomplete",
+  //             })
+  //           );
+  //           this.setState({ cartMenu: [], totalCost: 0 });
+  //           store.dispatch(CART_EMPTY());
 
-            alert("Order successfully Placed.");
-          }
-        );
-    } catch (error) {
-      alert("Please try again.");
-    }
-  };
+  //           alert("Order successfully Placed.");
+  //         }
+  //       );
+  //   } catch (error) {
+  //     alert("Please try again.");
+  //   }
+  // };
 
-  removeFromCart = async (item) => {
-    console.log(item.key);
-    try {
-      await firebase
-        .database()
-        .ref("cart")
-        .child(this.state.user.uid)
-        .child(item.key)
-        .remove();
+  // removeFromCart = async (item) => {
+  //   console.log(item.key);
+  //   try {
+  //     await firebase
+  //       .database()
+  //       .ref("cart")
+  //       .child(this.state.user.uid)
+  //       .child(item.key)
+  //       .remove();
 
-      let cartMenu = this.state.cartMenu.filter(
-        (newItem) => newItem.key !== item.key
-      );
-      let reducedCost = item.item.number * item.item.cost;
-      let totalCost = this.state.totalCost - reducedCost;
-      this.setState({ cartMenu: cartMenu, totalCost: totalCost });
+  //     let cartMenu = this.state.cartMenu.filter(
+  //       (newItem) => newItem.key !== item.key
+  //     );
+  //     let reducedCost = item.item.number * item.item.cost;
+  //     let totalCost = this.state.totalCost - reducedCost;
+  //     this.setState({ cartMenu: cartMenu, totalCost: totalCost });
 
-      store.dispatch(REMOVE_FROM_CART(item));
-    } catch (error) {
-      alert("Please try again.");
-    }
-  };
+  //     store.dispatch(REMOVE_FROM_CART(item));
+  //   } catch (error) {
+  //     alert("Please try again.");
+  //   }
+  // };
 
-  itemDisplay = (item, index) => {
+  eachItemDisplay = (item, index) => {
     return (
-      <View
-        style={{
-          borderColor: "black",
-          borderBottomWidth: 0.5,
-          paddingBottom: 10,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "300",
-            paddingLeft: 15,
-            paddingTop: 15,
-          }}
-        >
-          {index + 1}.
-        </Text>
-        <View style={styles.itemDisplayView}>
-          <View style={styles.itemDisplayItemDetails}>
-            <Text style={styles.itemDisplayName}>{item.item.name}</Text>
-            <Text style={styles.itemDisplayQuantity}>{item.item.quantity}</Text>
-          </View>
-          <View style={styles.itemDisplayItemCost}>
-            <Text style={styles.itemDisplayCost}>Rs. {item.item.cost}</Text>
-          </View>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={{ flex: 1 }}>
+          <Text>
+            {item.item.name} * {item.item.number}
+          </Text>
         </View>
-        <View>
-          <View style={{ paddingHorizontal: 30 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {item.restaurant.name}
-            </Text>
-            <Text style={{ fontSize: 14, fontWeight: "100" }}>
-              {item.restaurant.location}
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 14, fontWeight: "100" }}>
-                Quantity -{" "}
-              </Text>
-              <View style={{ paddingLeft: 100 }}>
-                <NumberView
-                  initialValue={1}
-                  leftContent={<Text style={{ fontSize: 22 }}>-</Text>}
-                  rightContent={<Text style={{ fontSize: 22 }}>+</Text>}
-                  onValueChange={(newVal) => {
-                    if (newVal >= 0) {
-                      let newCartMenu = this.state.cartMenu;
-                      let totalCost = this.state.totalCost;
-                      totalCost -=
-                        newCartMenu[index].item.number *
-                        newCartMenu[index].item.cost;
-                      totalCost += newVal * newCartMenu[index].item.cost;
-                      newCartMenu[index].item.number = newVal;
-                      this.setState({
-                        cartMenu: newCartMenu,
-                        totalCost: totalCost,
-                      });
-                    }
-                  }}
-                  minValue={0}
-                  onDecrement={() => console.log("-1")}
-                  onIncrement={() => console.log("+1")}
-                />
-              </View>
-            </View>
-            <View>
-              <Text style={{ fontSize: 14, fontWeight: "100" }}>
-                Cost - {item.item.cost * this.state.cartMenu[index].item.number}
-              </Text>
-            </View>
-            <CustomActionButton
-              onPress={() => this.removeFromCart(item)}
-              styleTouch={{
-                paddingTop: 10,
-                alignItems: "flex-end",
-              }}
-              style={{
-                width: 100,
-                height: 30,
-                borderRadius: 25,
-                backgroundColor: "#400807",
-              }}
-            >
-              <Text style={{ color: "#fff" }}>Remove</Text>
-            </CustomActionButton>
-          </View>
+        <View style={{ flex: 1 }}>
+          <Text>
+            Rs. {item.item.cost} @ {item.item.quantity}
+          </Text>
         </View>
       </View>
     );
   };
 
+  itemDisplay = (itemArray, index) => {
+    const cartArray = Object.values(itemArray).filter((item) => item.item);
+    const cartRestaurant = Object.values(itemArray).filter(
+      (item) => item.restaurant
+    );
+
+    return (
+      <View
+        style={{
+          margin: 20,
+          borderWidth: 0.2,
+          borderColor: color.black,
+          padding: 15,
+        }}
+      >
+        <View
+          style={{
+            borderBottomWidth: 0.2,
+            borderColor: color.black,
+            paddingBottom: 10,
+          }}
+        >
+          <Text>{cartRestaurant[0].restaurant.name}</Text>
+        </View>
+        <FlatList
+          data={cartArray}
+          style={{ paddingTop: 10 }}
+          renderItem={({ item, index }) => this.eachItemDisplay(item, index)}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={
+            <View style={{ marginTop: 40, alignItems: "center" }}>
+              <Text style={{ fontSize: 18 }}>
+                There are no items added in your Cart.
+              </Text>
+            </View>
+          }
+        />
+      </View>
+    );
+    // return (
+    //   <View
+    //     style={{
+    //       borderColor: "black",
+    //       borderBottomWidth: 0.5,
+    //       paddingBottom: 10,
+    //     }}
+    //   >
+    //     <Text
+    //       style={{
+    //         fontSize: 18,
+    //         fontWeight: "300",
+    //         paddingLeft: 15,
+    //         paddingTop: 15,
+    //       }}
+    //     >
+    //       {index + 1}.
+    //     </Text>
+    //     <View style={styles.itemDisplayView}>
+    //       <View style={styles.itemDisplayItemDetails}>
+    //         <Text style={styles.itemDisplayName}>{item.item.name}</Text>
+    //         <Text style={styles.itemDisplayQuantity}>{item.item.quantity}</Text>
+    //       </View>
+    //       <View style={styles.itemDisplayItemCost}>
+    //         <Text style={styles.itemDisplayCost}>Rs. {item.item.cost}</Text>
+    //       </View>
+    //     </View>
+    //     <View>
+    //       <View style={{ paddingHorizontal: 30 }}>
+    //         <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+    //           {item.restaurant.name}
+    //         </Text>
+    //         <Text style={{ fontSize: 14, fontWeight: "100" }}>
+    //           {item.restaurant.location}
+    //         </Text>
+    //         <View style={{ flexDirection: "row" }}>
+    //           <Text style={{ fontSize: 14, fontWeight: "100" }}>
+    //             Quantity -{" "}
+    //           </Text>
+    //           <View style={{ paddingLeft: 100 }}>
+    //             <NumberView
+    //               initialValue={1}
+    //               leftContent={<Text style={{ fontSize: 22 }}>-</Text>}
+    //               rightContent={<Text style={{ fontSize: 22 }}>+</Text>}
+    //               onValueChange={(newVal) => {
+    //                 if (newVal >= 0) {
+    //                   let newCartMenu = this.state.cartMenu;
+    //                   let totalCost = this.state.totalCost;
+    //                   totalCost -=
+    //                     newCartMenu[index].item.number *
+    //                     newCartMenu[index].item.cost;
+    //                   totalCost += newVal * newCartMenu[index].item.cost;
+    //                   newCartMenu[index].item.number = newVal;
+    //                   this.setState({
+    //                     cartMenu: newCartMenu,
+    //                     totalCost: totalCost,
+    //                   });
+    //                 }
+    //               }}
+    //               minValue={0}
+    //               onDecrement={() => console.log("-1")}
+    //               onIncrement={() => console.log("+1")}
+    //             />
+    //           </View>
+    //         </View>
+    //         <View>
+    //           <Text style={{ fontSize: 14, fontWeight: "100" }}>
+    //             Cost - {item.item.cost * this.state.cartMenu[index].item.number}
+    //           </Text>
+    //         </View>
+    //         <CustomActionButton
+    //           onPress={() => this.removeFromCart(item)}
+    //           styleTouch={{
+    //             paddingTop: 10,
+    //             alignItems: "flex-end",
+    //           }}
+    //           style={{
+    //             width: 100,
+    //             height: 30,
+    //             borderRadius: 25,
+    //             backgroundColor: "#400807",
+    //           }}
+    //         >
+    //           <Text style={{ color: "#fff" }}>Remove</Text>
+    //         </CustomActionButton>
+    //       </View>
+    //     </View>
+    //   </View>
+    // );
+  };
+
   render() {
+    console.log(store.getState().cartMenu);
     return (
       <View style={styles.container}>
         <Header text="My Cart" />
@@ -254,7 +310,7 @@ export default class MyCart extends Component {
                 </View>
               }
             />
-            {this.state.cartMenu.length == 0 ? null : (
+            {/* {this.state.cartMenu.length == 0 ? null : (
               <View
                 style={{
                   height: 50,
@@ -293,7 +349,7 @@ export default class MyCart extends Component {
                   </Text>
                 </View>
               </View>
-            )}
+            )} */}
           </View>
         ) : (
           <PageLoading />

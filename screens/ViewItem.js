@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   FlatList,
   ToastAndroid,
   BackHandler,
   StatusBar,
+  ScrollView,
 } from "react-native";
 
 import Dialog from "react-native-dialog";
@@ -23,7 +25,8 @@ import * as firebase from "firebase/app";
 import("firebase/auth");
 import("firebase/database");
 
-import { store, ADD_TO_CART } from "../helpers/redux-store";
+import { store, SET_CART_MENU } from "../helpers/redux-store";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default class ViewItem extends Component {
   constructor(props) {
@@ -66,16 +69,33 @@ export default class ViewItem extends Component {
   checkCartForItem = () => {
     if (this.state.selectedItem) {
       let found = 0;
+      // for (let i in store.getState().cartMenu) {
+      //   if (
+      //     store.getState().cartMenu[i].item.key === this.state.selectedItem.key
+      //   ) {
+      //     found = 1;
+      //     break;
+      //   }
+      // }
+
       for (let i in store.getState().cartMenu) {
-        if (
-          store.getState().cartMenu[i].item.key === this.state.selectedItem.key
-        ) {
-          found = 1;
+        if (store.getState().cartMenu[i].key === this.state.restaurant.key) {
+          for (let j in store.getState().cartMenu[i]) {
+            if (store.getState().cartMenu[i][j].item) {
+              if (
+                store.getState().cartMenu[i][j].item.key ===
+                this.state.selectedItem.key
+              ) {
+                found = 1;
+                break;
+              }
+            }
+          }
+        }
+        if (found) {
           break;
         }
       }
-
-      console.log("found - " + found);
 
       if (found) {
         return 1;
@@ -93,23 +113,45 @@ export default class ViewItem extends Component {
         .database()
         .ref("cart/")
         .child(this.state.user.uid)
+        .child(this.state.restaurant.key)
         .push().key;
 
-      let itemAdded = await firebase
+      await firebase
         .database()
         .ref("cart/")
         .child(this.state.user.uid)
+        .child(this.state.restaurant.key)
         .child(key)
         .set({
           item: item,
-          restaurant: this.state.restaurant,
         });
+
+      await firebase
+        .database()
+        .ref("cart/")
+        .child(this.state.user.uid)
+        .child(this.state.restaurant.key)
+        .child("details")
+        .set(
+          {
+            restaurant: this.state.restaurant,
+          },
+          async () => {
+            const myCartMenu = await firebase
+              .database()
+              .ref("cart/")
+              .child(store.getState().user.uid)
+              .once("value");
+            const cartMenu = snapshotToArray(myCartMenu);
+
+            store.dispatch(SET_CART_MENU(cartMenu));
+          }
+        );
 
       this.setState((previous) => ({
         dialogView: false,
         selectedItem: {},
       }));
-      store.dispatch(ADD_TO_CART(item, key, this.state.restaurant));
 
       ToastAndroid.showWithGravity(
         "Item was successfully added to your cart",
@@ -123,36 +165,129 @@ export default class ViewItem extends Component {
 
   itemDisplay = (item, index) => {
     return (
-      <View>
-        <View style={styles.itemDisplayView}>
-          <View style={styles.itemDisplayItemDetails}>
-            <Text style={styles.itemDisplayName}>{item.name}</Text>
-            <Text style={styles.itemDisplayQuantity}>{item.quantity}</Text>
-          </View>
-          <View style={styles.itemDisplayItemCost}>
-            <Text style={styles.itemDisplayCost}>Rs. {item.cost}</Text>
-          </View>
-        </View>
+      // <View>
+      //   <View style={styles.itemDisplayView}>
+      //     <View style={styles.itemDisplayItemDetails}>
+      //       <Text style={styles.itemDisplayName}>{item.name}</Text>
+      //       <Text style={styles.itemDisplayQuantity}>{item.quantity}</Text>
+      //     </View>
+      //     <View style={styles.itemDisplayItemCost}>
+      //       <Text style={styles.itemDisplayCost}>Rs. {item.cost}</Text>
+      //     </View>
+      //   </View>
 
-        <CustomActionButton
+      //   <CustomActionButton
+      //     style={{
+      //       width: 30,
+      //       height: 30,
+      //       borderRadius: 15,
+      //       backgroundColor: "#87CEF9",
+      //     }}
+      //     styleTouch={{
+      //       position: "absolute",
+      //       right: 0,
+      //       bottom: 0,
+      //       paddingRight: 10,
+      //     }}
+      // onPress={() =>
+      //   this.setState({ dialogView: true, selectedItem: item })
+      // }
+      //   >
+      //     <Text style={{ fontSize: 24 }}>+</Text>
+      //   </CustomActionButton>
+      // </View>
+
+      <View
+        style={{
+          borderWidth: 0.3,
+          borderColor: "#000",
+          borderRadius: 25,
+          width: 170,
+          margin: 10,
+        }}
+      >
+        <View
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: 15,
-            backgroundColor: "#87CEF9",
+            width: 150,
+            height: 110,
+            margin: 10,
+            backgroundColor: "#C4C4C4",
+            borderRadius: 10,
           }}
-          styleTouch={{
-            position: "absolute",
-            right: 0,
-            bottom: 0,
-            paddingRight: 10,
+        ></View>
+        <Text
+          style={{
+            marginHorizontal: 10,
+            fontWeight: "500",
+            fontSize: 18,
+            color: "#000",
           }}
-          onPress={() =>
-            this.setState({ dialogView: true, selectedItem: item })
-          }
         >
-          <Text style={{ fontSize: 24 }}>+</Text>
-        </CustomActionButton>
+          {item.name}
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            marginHorizontal: 10,
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={require("../assets/icons8-non-vegetarian-food-symbol-48.png")}
+            style={{ width: 20, height: 20 }}
+          />
+          <Text
+            style={{
+              fontWeight: "500",
+              fontSize: 11,
+              color: "#000",
+            }}
+          >
+            Non-Veg | {item.quantity}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <View>
+            <Text
+              style={{
+                marginHorizontal: 10,
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "#000",
+              }}
+            >
+              ₹ {item.cost}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              marginHorizontal: 20,
+              marginVertical: 10,
+            }}
+            onPress={() =>
+              this.setState({ dialogView: true, selectedItem: item })
+            }
+          >
+            <View
+              style={{
+                borderRadius: 10,
+                width: 80,
+                height: 30,
+                backgroundColor: "#4FAF61",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>ADD</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -160,11 +295,12 @@ export default class ViewItem extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header text={this.state.restaurant.name} />
+        <Header text="ShopIt" />
 
         {/* Content Start */}
         {this.state.loading ? (
-          <View style={styles.content}>
+          <ScrollView style={styles.content}>
+            <View style={{ height: 200, backgroundColor: "#C4C4C4" }}></View>
             {/* Add Item Dialog Box */}
             {this.state.dialogView && this.checkCartForItem() == 1 ? (
               <View>
@@ -202,29 +338,42 @@ export default class ViewItem extends Component {
                 </Dialog.Container>
               </View>
             )}
-            <View
-              style={{
-                minHeight: 100,
-                borderBottomWidth: 0.5,
-                borderColor: color.black,
-                paddingVertical: 20,
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.headerRestaurantName}>
+
+            <View style={{ marginLeft: 20, marginTop: 25, marginBottom: 30 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 24, color: "#000" }}>
                 {this.state.restaurant.name}
               </Text>
-              <Text style={styles.headerRestaurantLocation}>
-                Address - {this.state.restaurant.location}
+              <Text
+                style={{
+                  fontWeight: "normal",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                  color: "#000",
+                }}
+              >
+                North Indian | Pure Veg
+              </Text>
+              <Text style={{ fontWeight: "500", fontSize: 20, color: "#000" }}>
+                Near {this.state.restaurant.location}
               </Text>
             </View>
-            <View style={styles.MenuView}>
-              <Text style={styles.MenuText}>Menu</Text>
-            </View>
+
+            <View
+              style={{
+                borderWidth: 0.7,
+                borderColor: "#828282",
+                marginHorizontal: 25,
+              }}
+            ></View>
+
             <FlatList
               data={this.state.menu}
               renderItem={({ item }, index) => this.itemDisplay(item, index)}
               keyExtractor={(item, index) => index.toString()}
+              numColumns={2}
+              contentContainerStyle={{
+                alignItems: "center",
+              }}
               ListEmptyComponent={
                 <View style={{ marginTop: 40, alignItems: "center" }}>
                   <Text style={{ fontSize: 24 }}>
@@ -233,7 +382,7 @@ export default class ViewItem extends Component {
                 </View>
               }
             />
-          </View>
+          </ScrollView>
         ) : (
           <PageLoading />
         )}
