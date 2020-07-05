@@ -302,7 +302,7 @@ export default class ViewItem extends Component {
           <ScrollView style={styles.content}>
             <View style={{ height: 200, backgroundColor: "#C4C4C4" }}></View>
             {/* Add Item Dialog Box */}
-            {this.state.dialogView && this.checkCartForItem() == 1 ? (
+            {/* {this.state.dialogView && this.checkCartForItem() == 1 ? (
               <View>
                 <Dialog.Container visible={this.state.dialogView}>
                   <Dialog.Title>Add to Cart</Dialog.Title>
@@ -337,7 +337,7 @@ export default class ViewItem extends Component {
                   />
                 </Dialog.Container>
               </View>
-            )}
+            )} */}
 
             <View style={{ marginLeft: 20, marginTop: 25, marginBottom: 30 }}>
               <Text style={{ fontWeight: "bold", fontSize: 24, color: "#000" }}>
@@ -387,6 +387,126 @@ export default class ViewItem extends Component {
           <PageLoading />
         )}
         {/* Content End */}
+
+        {this.state.dialogView && (
+          <View
+            style={{
+              marginBottom: 5,
+              marginTop: 0,
+              marginHorizontal: 10,
+              borderWidth: 0.5,
+              color: "#000",
+              borderRadius: 15,
+              height: 300,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => this.setState({ dialogView: false })}
+              style={{ alignItems: "flex-end", margin: 10 }}
+            >
+              <Image
+                source={require("../assets/icons8-cancel-64.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </TouchableOpacity>
+            <View
+              style={{ marginHorizontal: 20, marginTop: 5, marginBottom: 10 }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 24, color: "#000" }}>
+                {this.state.restaurant.name}
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "normal",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                  color: "#000",
+                }}
+              >
+                North Indian | Pure Veg
+              </Text>
+              <Text style={{ fontWeight: "500", fontSize: 20, color: "#000" }}>
+                Near {this.state.restaurant.location}
+              </Text>
+            </View>
+
+            {/* LINE */}
+            <View
+              style={{
+                borderWidth: 0.7,
+                borderColor: "#828282",
+                marginHorizontal: 25,
+              }}
+            ></View>
+
+            {/* ITEM */}
+            <View style={{ marginHorizontal: 20 }}>
+              <Text
+                style={{
+                  fontWeight: "500",
+                  fontSize: 18,
+                  color: "#000",
+                }}
+              >
+                {this.state.selectedItem.name}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 13,
+                  marginBottom: 18,
+                }}
+              >
+                {/* NON VEG */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    position: "absolute",
+                    left: 0,
+                  }}
+                >
+                  <Image
+                    source={require("../assets/icons8-non-vegetarian-food-symbol-48.png")}
+                    style={{ width: 20, height: 20 }}
+                  />
+                  <Text
+                    style={{
+                      fontWeight: "500",
+                      fontSize: 11,
+                      color: "#000",
+                    }}
+                  >
+                    Non-Veg | {this.state.selectedItem.quantity}
+                  </Text>
+                </View>
+
+                {/* COST */}
+                <View style={{ position: "absolute", right: 10 }}>
+                  <Text style={{ fontWeight: "normal", fontSize: 26 }}>
+                    ₹ {this.state.selectedItem.cost}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View
+              style={{
+                height: 50,
+                borderRadius: 10,
+                borderWidth: 0.2,
+                borderColor: "#000",
+                marginHorizontal: 40,
+                marginVertical: 10,
+                backgroundColor: "#4FAF61",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 24, fontWeight: "500" }}>ADD</Text>
+            </View>
+          </View>
+        )}
 
         {this.state.loading ? (
           <Footer props={this.props} user={this.state.user} />
